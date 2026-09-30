@@ -39,7 +39,7 @@ Prerequisites: a running dsh web profile (`profiles/web`). PowerShell 5+ (bundle
 1. Clone this repo anywhere:
 
     ```
-    git clone https://github.com/<you>/dsh-task-complete-sound.git
+    git clone https://github.com/CityNanFlower/dsh-task-complete-sound.git
     cd dsh-task-complete-sound
     ```
 
