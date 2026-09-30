@@ -1,0 +1,33 @@
+{
+  "name": "@local/dsh-task-complete-sound",
+  "version": "0.4.1",
+  "description": "DSH Web GUI plugin: classified synthesized notification cues when a task / agent turn completes (normal end, background completion, approval waiting, error ending), with optional desktop notifications, tab-title flashing, per-session muting and click-to-jump. Config syncs across browsers via the host settings namespace (localStorage fallback).",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-connection"
+      ],
+      "platform": "web"
+    }
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.4"
+  },
+  "license": "MIT"
+}
