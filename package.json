@@ -1,7 +1,7 @@
 {
   "name": "@local/dsh-task-complete-sound",
-  "version": "0.4.1",
-  "description": "DSH Web GUI plugin: classified synthesized notification cues when a task / agent turn completes (normal end, background completion, approval waiting, error ending), with optional desktop notifications, tab-title flashing, per-session muting and click-to-jump. Config syncs across browsers via the host settings namespace (localStorage fallback).",
+  "version": "0.4.2",
+  "description": "DSH Web GUI plugin: classified synthesized notification cues when a task / agent turn completes (normal end, background completion, waiting-for-user events, error ending), with optional desktop notifications, tab-title flashing, per-session muting and click-to-jump. Waiting events (tool approval, ask_user_question cards, plan reviews) always pop the banner, even in the foreground. Config syncs across browsers via the host settings namespace (localStorage fallback).",
   "type": "module",
   "main": "lib/index.js",
   "exports": {

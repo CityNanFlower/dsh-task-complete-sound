@@ -2,7 +2,9 @@
 
 **简体中文** · [English](#english)（文末折叠区）
 
-DSH Web GUI 插件：**按事件分类的任务完成提示音 + 可选桌面通知**。当 GUI 里发生回合结束、后台完成、工具审批、错误结束四类事件时，播放 Web Audio 实时合成的提示音——**无需音频资源、无网络请求**。另支持桌面通知点击跳转会话、标签页标题闪烁、免打扰时段、按会话关键词静音、完成来源区分（主会话 / 子代理 / 自动化任务）、跨浏览器配置同步。
+DSH Web GUI 插件：**按事件分类的任务完成提示音 + 可选桌面通知**。当 GUI 里发生回合结束、后台完成、等待类（工具审批 / 等待回答 / 计划确认）、错误结束四类事件时，播放 Web Audio 实时合成的提示音——**无需音频资源、无网络请求**。另支持桌面通知点击跳转会话、标签页标题闪烁、免打扰时段、按会话关键词静音、完成来源区分（主会话 / 子代理 / 自动化任务）、跨浏览器配置同步。
+
+> **v0.4.2**：等待类事件（审批 / 回答 / 计划确认）**不受「前台不弹横幅」限制**——人在盯着页面时也弹系统横幅，避免多会话并行时漏掉卡住的会话。
 
 ## 功能特性
 
@@ -12,21 +14,21 @@ DSH Web GUI 插件：**按事件分类的任务完成提示音 + 可选桌面通
 |---|---|---|
 | 回合结束 | 任意会话回合正常结束（mux `turn/end`，reason = completed / max-tokens / blocked）；手动停止（aborted / interrupted）不响 | 海风铃 |
 | 后台完成 | 未打开的会话在后台跑完（侧边栏绿色完成标记） | 珊瑚叮 |
-| 等待审批 | 工具请求审批；**不受「仅后台」与防抖合并限制，免打扰时段也始终可听** | 泡泡 |
+| 等待类 | 会话卡住等你：工具审批（`approval`）、提问卡片（`question`）、计划确认（`plan-review`）；**不受「仅后台」「防抖合并」「静音会话」限制，免打扰时段也始终可听；且不受「前台不弹横幅」限制——始终弹系统横幅** | 泡泡 |
 | 错误结束 | 回合因错误结束（reason = error），便于立刻发现异常 | 风暴警报 |
 
 - **8 种合成音色**（海风铃 / 珊瑚叮 / 灯塔钟 / 泡泡 / 波光 / 木鱼 / 风暴警报 / 静音），切换即试听，每个音效行带独立试听按钮
-- **桌面通知**：点击通知聚焦窗口并跳转到对应会话；「前台不弹横幅」——人在盯页面时只响声音，切到后台才弹横幅；2 秒时间窗分桶防抖，快速连发不会互相吞掉横幅
-- **标签页标题闪烁**：页面在后台时，事件触发让标题闪现前缀（✅ 完成 / ⚠️ 审批 / ⛔ 错误），切回即停
-- **免打扰时段**：设起止时间（支持跨零点），时段内完成类提示整体静音；审批仍弹通知（不出声）
-- **静音会话**：按标题关键词静音某个会话的完成类提示；**审批与错误不受影响**（异常永远值得知道）
+- **桌面通知**：点击通知聚焦窗口并跳转到对应会话；「前台不弹横幅」——人在盯页面时完成类事件只响声音，切到后台才弹横幅（**等待类事件不受此限制，始终弹横幅**）；2 秒时间窗分桶防抖，快速连发不会互相吞掉横幅
+- **标签页标题闪烁**：页面在后台时，事件触发让标题闪现前缀（✅ 完成 / ⚠️ 审批 / ❓ 回答 / 📋 计划 / ⛔ 错误），切回即停
+- **免打扰时段**：设起止时间（支持跨零点），时段内完成类提示整体静音；等待类事件仍弹通知（不出声）
+- **静音会话**：按标题关键词静音某个会话的完成类提示；**等待类与错误不受影响**（异常永远值得知道）
 - **来源区分**：通知标题标注完成事件来自主会话 / 子代理 / 自动化任务；schedule-bundle 未加载时自动降级
 - **处理结果行**：设置卡内记录每个事件的实际去向——已完整提醒 / 被免打扰静音 / 仅后台模式前台不提醒 / 当前会话免响 / 关键词过滤 / 防抖合并——「测试弹、真实事件不弹」时一眼看出被哪个闸门拦了
 - **配置宿主同步**：配置经宿主 settings 命名空间持久化，跨浏览器、dsh-desk 桌面端一致（宿主不可用时回落 localStorage）
 
 ## 兼容性
 
-实测 dsh `0.1.7` 与 `0.2.0-rc.1`（web profile）。浏览器半边基于公开的 `dsh.client` 注入面（`@deepseek-ai/dsh-client-runtime` / `@deepseek-ai/dsh-client-connection`）。
+实测 dsh `0.1.7`、`0.2.0-rc.1` 与 `0.2.0-rc.2`（web profile）。浏览器半边基于公开的 `dsh.client` 注入面（`@deepseek-ai/dsh-client-runtime` / `@deepseek-ai/dsh-client-connection`）。
 
 ## 安装
 
@@ -66,17 +68,19 @@ DSH Web GUI 插件：**按事件分类的任务完成提示音 + 可选桌面通
 - **宿主半边**（`lib/index.js`）：无运行时行为，只负责注册 `dsh.client` 声明和 schemastery `Config` schema（settings 命名空间）。
 - **浏览器半边**（`lib/client.js`）四路信号冗余：
   1. mux SSE `turn/end`（主通道，带结束原因，据此分类）；
-  2. `uiSession.sessionStatus` 的 pendingInteraction（审批检测）；
+  2. `uiSession.sessionStatus` 的 pendingInteraction（等待类检测：`approval` / `question` / `plan-review`，按 key 变化去重）；
   3. 会话列表 running/completed 边沿（SSE 失效兜底）；
   4. 当前会话 conversation 快照 running / turnEnds 边沿（兜底）+ 800ms 轮询。
 - 音效由 Web Audio API 实时合成；配置存宿主 settings 命名空间（回落 localStorage 键 `dsh.taskCompleteSound.v1`），设置卡内编辑（含试听与调试日志开关）。
+- 等待类事件的判据来自 Client 侧的 pending-interaction 聚合快照（每个会话只暴露优先级最高的那一个：`plan-review` > `question` > `approval`），因此**不依赖会话是否被打开**，后台会话卡住同样提醒。
+- 为什么不用 `ctx.remote.$on('approval/request')`：该 remote 事件是 **waterfall**，`dsh-client-ui-approval` 的内置监听器先注册并直接返回用户决定（claim），后续监听器不会再被派发——第三方插件挂上去会静默收不到事件。快照通道是唯一对所有会话都可靠的一路。
 - 失败策略：全程 best-effort、绝不抛错——提示音插件不能把 web shell 拖下水（shell 在 apply 抛错时会启动失败）。任何不在 `inject` 列表里的服务面属性，访问都必须带守卫（可选服务的 getter「访问即抛错」——血泪教训见版本沿革 v0.4.1）。
 
 <a id="english"></a>
 <details>
 <summary><b>🌐 English</b></summary>
 
-A DeepSeek Harness (dsh) Web GUI plugin that plays **synthesized notification cues when a task / agent turn completes** — no audio assets, no network requests, everything is generated live with the Web Audio API — plus optional desktop notifications with click-to-jump, tab-title flashing, per-session muting, and quiet hours. Configuration syncs across browsers via the host settings namespace.
+A DeepSeek Harness (dsh) Web GUI plugin that plays **synthesized notification cues when a task / agent turn completes** — no audio assets, no network requests, everything is generated live with the Web Audio API — plus optional desktop notifications with click-to-jump, tab-title flashing, per-session muting, and quiet hours. Configuration syncs across browsers via the host settings namespace. Since v0.4.2, **waiting events (tool approval, ask_user_question cards, plan reviews) always pop the banner, even while the page is focused**.
 
 **Features**
 
@@ -86,18 +90,18 @@ A DeepSeek Harness (dsh) Web GUI plugin that plays **synthesized notification cu
 |---|---|---|
 | Turn end | a session's turn ends normally (mux `turn/end`, reason = completed / max-tokens / blocked); manual stops stay silent | Chime |
 | Background done | a session finishes while not open (the sidebar's green "done" mark) | Ding |
-| Approval pending | a tool request needs approval (**always audible**, exempt from quiet hours and burst merging) | Bubble |
+| Waiting (approval / question / plan review) | a session is blocked on you (**always audible**, exempt from quiet hours, burst merging, muted keywords and the foreground banner gate) | Bubble |
 | Error end | a turn ends with reason = error | Storm alarm |
 
 - **8 synthesized tones** with per-event preview buttons
-- **Desktop notifications** with click-to-jump-to-session, foreground suppression, and 2-second burst merging
-- **Tab-title flashing** (✅ / ⚠️ / ⛔) while the page is hidden
-- **Quiet hours** (crosses midnight), current-session muting, mute-by-title-keyword (approvals & errors always get through)
+- **Desktop notifications** with click-to-jump-to-session, foreground suppression for completion events, and 2-second burst merging
+- **Tab-title flashing** (✅ / ⚠️ / ❓ / 📋 / ⛔) while the page is hidden
+- **Quiet hours** (crosses midnight), current-session muting, mute-by-title-keyword (waiting events & errors always get through)
 - **Source classification**: main session / subagent / scheduled automation task, with graceful degradation
 - **Event trace** in the settings card: every event's outcome (played / muted / merged / gated) is logged, so "test works but real events don't" is always diagnosable
 - **Config sync** across browsers and the desktop client (localStorage fallback)
 
-**Compatibility:** tested on dsh `0.1.7` and `0.2.0-rc.1` (web profile).
+**Compatibility:** tested on dsh `0.1.7`, `0.2.0-rc.1` and `0.2.0-rc.2` (web profile).
 
 **Install** (Windows PowerShell; respects `DSH_HOME`, hot-reloads, no dsh restart needed):
 
@@ -109,13 +113,23 @@ cd dsh-task-complete-sound
 
 Refresh the GUI page and configure under Settings → Web UI plugins → 任务完成提示音.
 
-**How it works:** the host half registers the `dsh.client` declaration and the schemastery `Config` schema; the browser half watches four redundant signals (mux SSE `turn/end`, `uiSession.sessionStatus` approvals, session-list edges, conversation-snapshot edges + 800 ms poll). Everything is best-effort and never throws. Guard every optional service access — non-injected getters can throw on access (v0.4.1 lesson).
+**How it works:** the host half registers the `dsh.client` declaration and the schemastery `Config` schema; the browser half watches four redundant signals (mux SSE `turn/end`, `uiSession.sessionStatus` pending interactions — approval / question / plan-review, session-list edges, conversation-snapshot edges + 800 ms poll). Waiting cues ride the aggregated pending-interaction snapshot because the `approval/request` remote event is a waterfall whose built-in listener claims the request first. Everything is best-effort and never throws. Guard every optional service access — non-injected getters can throw on access (v0.4.1 lesson).
 
 The detailed changelog below is in Chinese; each entry summarizes what the release changed.
 
 </details>
 
 ## 版本沿革（Changelog）
+
+## v0.4.2 新增（等待审批 / 等待回答 / 计划确认：前台也弹通知）
+
+- **前台豁免（本次需求）**：v0.3.7 加的「前台不弹横幅」此前对审批同样生效——页面在前台时审批只响声音、不弹横幅，人在多会话并行时容易漏掉。现在**等待类事件一律弹横幅**，不受该开关限制（免打扰时段仍只弹不响）。新开关**「等待类事件始终弹横幅」**（默认开）可退回旧行为：关闭后等待类事件重新受「前台不弹横幅」约束。
+- **纳入另外两类等待**：此前只识别 `approval`，现在把 dsh 0.2.0 的三类 pending interaction 都纳入——`approval`（工具审批）、`question`（ask_user_question 提问卡片）、`plan-review`（计划审阅）。三者共用一路音效（泡泡）与横幅通道，通知标题分别为「等待审批 / 等待你的回答 / 等待确认计划」，正文带工具名或首个问题文本（截断 60 字）。新开关**「等待回答 / 计划确认也提醒」**（默认开）可只保留工具审批。
+- **去重改为按 key 比较**：旧实现只在「会话从无等待变为有等待」时提醒，同会话内一次审批被另一类等待就地替换（key 变化）不会提醒；现在 key 变化即提醒，同一 key 重复发布不重复弹。
+- **处理结果行**新增判定「等待类事件已弹系统横幅（前台豁免）」；「声音已响但桌面通知开关未开」现在也会在等待类事件上显示（提醒你总开关没开，审批同样弹不出来）。
+- 实测：前台弹横幅 + 泡泡音在真实 GUI 上通过（`ask_user_question` 卡片触发）；`test/` 下三个脚本可复跑——`waiting-gates.test.mjs` 19/19（stub 浏览器里跑真实 `lib/client.js`：前台弹横幅、三类等待、两个新开关、`notifyDesktop`/`enabled` 总闸门、完成类事件仍受前台限制、免打扰与静音会话不拦等待类）、`card-render.test.mjs` 8/8（渲染展开态设置卡，确认新开关与文案真的渲染、未退回原始文案键）、`live-serve-check.mjs` 5/5（从运行中 GUI 取本插件 `client.js` 确认下发版本、`degraded` 为空）。
+- **宿主 schema 需重启 dsh 生效**：`lib/index.js` 的 Config 新增 `notifyWaitingAlways` / `notifyWaitingKinds`；不重启也能用（浏览器侧以 localStorage + 自身默认值为准）。
+
 ## v0.4.1 修复（插件整体失效：可选服务探测未防护）
 
 - **根因**：v0.4.0 的启动探测 `remoteFace.schedule` 没有 try/catch 保护。schedule 服务来自可选的 schedule 插件，cordis 客户端访问器对未注入的可选服务是「访问即抛错」——探测一抛，整个 apply 中断：提示音监视器、设置卡注册全部没执行，插件在 Web UI 里表现为「消失」。
